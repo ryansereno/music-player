@@ -59,7 +59,7 @@
           </ul>
 
           <!-- Login Form -->
-          <form v-show="currentTab==='login'">
+          <vee-form v-show="currentTab === 'login'">
             <!-- Email -->
             <div class="mb-3">
               <label class="inline-block mb-2">Email</label>
@@ -84,17 +84,22 @@
             >
               Submit
             </button>
-          </form>
+          </vee-form>
           <!-- Registration Form -->
-          <form v-show="currentTab==='register'">
+          <vee-form v-show="currentTab === 'register'"
+            :validation-schema="schema"
+            >
             <!-- Name -->
             <div class="mb-3">
               <label class="inline-block mb-2">Name</label>
-              <input
+              <vee-field
                 type="text"
                 class="block w-full py-1.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded"
                 placeholder="Enter Name"
+                name="name"
               />
+              <ErrorMessage class="text-red-600" name="name" />
+              
             </div>
             <!-- Email -->
             <div class="mb-3">
@@ -156,7 +161,7 @@
             >
               Submit
             </button>
-          </form>
+          </vee-form>
         </div>
       </div>
     </div>
@@ -171,6 +176,15 @@ export default {
   data() {
     return {
       currentTab: "login",
+      schema:{
+        name:"required",
+        email:"",
+        age:"",
+        password:"",
+        confirm_password:"",
+        country:"",
+        tos:"",
+      }
     };
   },
   computed: {
