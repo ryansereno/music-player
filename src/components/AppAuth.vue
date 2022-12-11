@@ -63,10 +63,13 @@
             <!-- Email -->
             <div class="mb-3">
               <label class="inline-block mb-2">Email</label>
-              <vee-field type="email" class="block w-full py-1.5 px-3
-              text-gray-800 border border-gray-300 transition duration-500
-              focus:outline-none focus:border-black rounded" placeholder="Enter
-              Email" name="email" />
+              <vee-field
+                type="email"
+                class="block w-full py-1.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded"
+                placeholder="Enter
+              Email"
+                name="email"
+              />
             </div>
             <!-- Password -->
             <div class="mb-3">
@@ -86,10 +89,16 @@
             </button>
           </vee-form>
           <!-- Registration Form -->
+          <div
+            class="text-white text-center font-bold p-4 rounded mb-4"
+            v-if="showRegistrationAlert"
+            :class="regAlertClass"
+            >{{regAlertMessage}}</div>
           <vee-form
             v-show="currentTab === 'register'"
             :validation-schema="schema"
             @submit="register"
+            :initial-values="userData"
           >
             <!-- Name -->
             <div class="mb-3">
@@ -127,12 +136,20 @@
             <div class="mb-3">
               <label class="inline-block mb-2">Password</label>
               <vee-field
-                type="password"
-                class="block w-full py-1.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded"
-                placeholder="Password"
+                :bails="false"
                 name="password"
-              />
-              <ErrorMessage class="text-red-600" name="password" />
+                v-slot="{ field, errors }"
+              >
+                <input
+                  class="block w-full py-1.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded"
+                  placeholder="Password"
+                  v-bind="field"
+                  type="password"
+                />
+                <div class="text-red-600" v-for="error in errors" :key="error">
+                  {{ error }}
+                </div>
+              </vee-field>
             </div>
             <!-- Confirm Password -->
             <div class="mb-3">
@@ -148,13 +165,15 @@
             <!-- Country -->
             <div class="mb-3">
               <label class="inline-block mb-2">Country</label>
-              <vee-field as="select"
+              <vee-field
+                as="select"
                 class="block w-full py-1.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded"
                 name="country"
               >
                 <option value="USA">USA</option>
                 <option value="Mexico">Mexico</option>
                 <option value="Germany">Germany</option>
+                <option value="Antarctica">Antarctica</option>
               </vee-field>
               <ErrorMessage class="text-red-600" name="country" />
             </div>
@@ -172,6 +191,7 @@
             <button
               type="submit"
               class="block w-full bg-purple-600 text-white py-1.5 px-3 rounded transition hover:bg-purple-700"
+              :disabled="isSubmitting"
             >
               Submit
             </button>
@@ -194,11 +214,18 @@ export default {
         name: "required|min:3|max:100|alpha_spaces",
         email: "required|min:3|max:100|email",
         age: "required|min_value:17|max_value:110",
-        password: "required|min:6|max:100",
-        confirm_password: "required|confirmed:@password",
-        country: "required|excluded:Antarctica",
-        tos: "required",
+        password: "required|min:9|max:100|excluded:password",
+        confirm_password: "required|passwords_mismatch:@password",
+        country: "required|country_excluded:Antarctica",
+        tos: "tos",
       },
+      userData: {
+        country: "USA",
+      },
+      isSubmitting: false,
+      showRegistrationAlert: false,
+      regAlertClass: "bg-blue-500",
+      regAlertMessage: "Please wait, your account is being created",
     };
   },
   computed: {
@@ -211,9 +238,15 @@ export default {
     closeModal() {
       this.modalVisibility = false;
     },
-    register(values){
-      console.log(values)
-    }
+    register(values) {
+      this.showRegistrationAlert = true
+      this.isSubmitting = true
+      this.regAlertClass= "bg-blue-500",
+      this.regAlertMessage= "Please wait, your account is being created",
+      this.regAlertClass= "bg-green-500",
+      this.regAlertMessage= "Success! Account created",
+        console.log(values)
+    },
   },
 };
 </script>
